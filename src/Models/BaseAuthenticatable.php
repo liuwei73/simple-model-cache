@@ -2,10 +2,8 @@
 
 namespace liuwei73\SimpleModelCache\Models;
 
-use App\Models\Cachable\CachableBelongsToMany;
-use App\Models\Cachable\CachableMorphToMany;
-use App\Models\Generators\IDGen;
 use liuwei73\SimpleModelCache\Traits\ColumnMapping;
+use liuwei73\SimpleModelCache\Traits\IDGen;
 
 abstract class BaseAuthenticatable extends CachableAuthenticatable
 {
