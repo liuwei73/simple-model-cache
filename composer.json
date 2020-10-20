@@ -1,0 +1,21 @@
+{
+    "name": "liuwei73/simple-model-cache",
+    "description": "Very simple cachable implementation for Laravel Eloquent Model",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wei Liu",
+            "email": "liuwei73@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "illuminate/cache": "^8.0",
+        "illuminate/config": "^8.0",
+        "illuminate/console": "^8.0",
+        "illuminate/container": "^8.0",
+        "illuminate/database": "^8.0",
+        "illuminate/http": "^8.0",
+        "illuminate/support": "^8.0"
+    },
+}
