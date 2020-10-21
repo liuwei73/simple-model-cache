@@ -24,6 +24,11 @@ class CachableMorphToMany extends MorphToMany
 
 	public function get($columns = ['*'])
 	{
+		if( !( count($columns ) == 1 && $columns[0] === "*" ) )
+		{
+			return parent::get( $columns );
+		}
+
 		// get 方法在非 lazy load 的时候也会被调用，这种情况下 eagerModels 就是 NULL 了，需要处理这个情况
 		if( $this->eagerModels !== NULL ){
 			$parent_keys = $this->getKeys($this->eagerModels, $this->parentKey);

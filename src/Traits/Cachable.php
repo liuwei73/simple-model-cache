@@ -4,6 +4,7 @@ namespace liuwei73\SimpleModelCache\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use liuwei73\SimpleModelCache\Models\CachableBelongsTo;
 use liuwei73\SimpleModelCache\Models\CachableBelongsToMany;
 use liuwei73\SimpleModelCache\Models\CachableMorphToMany;
 use liuwei73\SimpleModelCache\Models\CachedBuilder;
@@ -42,6 +43,11 @@ trait Cachable
 			$cacheKey = $this->getCacheKey();
 			$cache->forget( $cacheKey );
 		}
+	}
+
+	protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
+	{
+		return new CachableBelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
 	}
 
 	protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey,
