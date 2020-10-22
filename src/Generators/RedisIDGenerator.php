@@ -10,7 +10,7 @@ class RedisIDGenerator implements IDGenerator
 
 	public function init()
 	{
-		$store_name = config( "cache.laravel-model-id-generator.store" );
+		$store_name = config( "cache.laravel-model-idg-cache-store" );
 		$this->redis = Redis::connection( $store_name );
 	}
 

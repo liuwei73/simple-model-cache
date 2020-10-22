@@ -157,13 +157,11 @@ class CachedBuilder extends Builder
 
 	public function cache(array $tags = [])
 	{
-		$cache = Container::getInstance()->make("cache");
-		$config = Container::getInstance()
-			->make("config")
-			->get("laravel-model-caching.store");
+		$cache = Container::getInstance()->make("cache" );
+		$store_name = config( "cache.laravel-model-cache-store" );
 
-		if ($config) {
-			$cache = $cache->store($config);
+		if ($store_name) {
+			$cache = $cache->store( $store_name );
 		}
 
 		return $cache;
