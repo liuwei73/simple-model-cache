@@ -13,9 +13,7 @@ class BaseModel extends CachableModel
 	const CREATED_AT = 'created_at';
 	const UPDATED_AT = 'updated_at';
 
-	protected $update_using_timestamp = true;
-
-	use ColumnMapping;
+//	use ColumnMapping;
 
 	protected $primaryKey = 'id';
 	public $incrementing = false;

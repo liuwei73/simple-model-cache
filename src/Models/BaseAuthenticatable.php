@@ -15,7 +15,7 @@ abstract class BaseAuthenticatable extends CachableAuthenticatable
 
 	protected $update_using_timestamp = true;
 
-	use ColumnMapping;
+//	use ColumnMapping;
 
 	protected $primaryKey = 'id';
 	public $incrementing = false;

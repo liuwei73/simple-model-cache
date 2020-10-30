@@ -36,24 +36,4 @@ trait ColumnMapping
 		else
 			$this->setAttribute( $key, $real_value );
 	}
-
-	/**
-	 * Set the keys for a save update query.
-	 * Add update_using_timestamp for make sure dirty data is not used.
-	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	protected function setKeysForSaveQuery($query)
-	{
-		$query->where( $this->getKeyName(), '=', $this->getKeyForSaveQuery() );
-		if ( $this->update_using_timestamp && $this->usesTimestamps() ) {
-			$updatedAtColumn = $this->getUpdatedAtColumn();
-			$old_timestamp = $this->getOriginal( $updatedAtColumn );
-			if( $old_timestamp ) {
-				$query->where( $updatedAtColumn, "=", $old_timestamp );
-			}
-		}
-		return $query;
-	}
 }
