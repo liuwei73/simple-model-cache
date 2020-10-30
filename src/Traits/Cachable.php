@@ -2,13 +2,14 @@
 
 namespace liuwei73\SimpleModelCache\Traits;
 
+use Chelout\RelationshipEvents\Concerns\HasBelongsToManyEvents;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use liuwei73\SimpleModelCache\Models\CachableBelongsTo;
-use liuwei73\SimpleModelCache\Models\CachableBelongsToMany;
-use liuwei73\SimpleModelCache\Models\CachableMorphToMany;
-use liuwei73\SimpleModelCache\Models\CachedBuilder;
+use liuwei73\SimpleModelCache\Relations\CachableBelongsTo;
+use liuwei73\SimpleModelCache\Relations\CachableBelongsToMany;
+use liuwei73\SimpleModelCache\Relations\CachableMorphToMany;
+use liuwei73\SimpleModelCache\Models\CachableBuilder;
 
 trait Cachable
 {
@@ -17,21 +18,41 @@ trait Cachable
 	public $cacheKeyPrefix = "EloquentModelCache";
 	protected $update_using_timestamp = true;
 
+	use HasBelongsToManyEvents;
+
+	/**
+	 * monitor updated event to clear cache.
+	 *
+	 */
 	public static function bootCachable()
 	{
 		static::updated( function($model){
-			if( $model->isCachable )
-			{
-				$cache = $model->cache();
-				$cacheKey = $model->getCacheKey();
-				$cache->forget( $cacheKey );
-			}
+			static::clearCache( $model );
+		});
+		static::belongsToManySynced( function($relation, $parent, $ids, $attributes){
+			static::clearCache( $parent );
 		});
 	}
 
+	public static function clearCache( $model )
+	{
+		if( $model->isCachable )
+		{
+			$cache = $model->cache();
+			$cacheKey = $model->getCacheKey();
+			$cache->forget( $cacheKey );
+		}
+	}
+
+	/**
+	 * Overwrite newEloquentBuilder function to return CachableBuilder
+	 *
+	 * @param $query
+	 * @return CachableBuilder
+	 */
 	public function newEloquentBuilder($query)
 	{
-		return new CachedBuilder($query);
+		return new CachableBuilder($query);
 	}
 
 	public function getCacheKey()

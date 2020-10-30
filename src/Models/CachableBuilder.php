@@ -6,7 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 
-class CachedBuilder extends Builder
+class CachableBuilder extends Builder
 {
 	public function get($columns = ["*"])
 	{

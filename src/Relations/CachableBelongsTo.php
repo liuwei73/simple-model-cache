@@ -1,12 +1,12 @@
 <?php
 
 
-namespace liuwei73\SimpleModelCache\Models;
+namespace liuwei73\SimpleModelCache\Relations;
 
 
+use Chelout\RelationshipEvents\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CachableBelongsTo extends BelongsTo
 {
