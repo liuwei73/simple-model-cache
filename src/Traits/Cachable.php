@@ -25,7 +25,6 @@ trait Cachable
 	public static function bootCachable()
 	{
 		static::updated( function($model){
-			Log::debug( "Model on updated .... " );
 			$model->clearCache();
 		});
 	}
