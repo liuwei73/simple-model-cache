@@ -18,8 +18,6 @@ trait Cachable
 	public $cacheKeyPrefix = "EloquentModelCache";
 	protected $update_using_timestamp = true;
 
-	use HasBelongsToManyEvents;
-
 	/**
 	 * monitor updated event to clear cache.
 	 *
@@ -27,20 +25,30 @@ trait Cachable
 	public static function bootCachable()
 	{
 		static::updated( function($model){
-			static::clearCache( $model );
-		});
-		static::belongsToManySynced( function($relation, $parent, $ids, $attributes){
-			static::clearCache( $parent );
+			Log::debug( "Model on updated .... " );
+			$model->clearCache();
 		});
 	}
 
-	public static function clearCache( $model )
+	protected $cache_cleared = false;
+
+	public function clearCache()
 	{
-		if( $model->isCachable )
+		if( $this->cache_cleared === false && $this->isCachable  )
 		{
-			$cache = $model->cache();
-			$cacheKey = $model->getCacheKey();
+			$cache = $this->cache();
+			$cacheKey = $this->getCacheKey();
 			$cache->forget( $cacheKey );
+			Log::debug( "Clear Model Cache ".$cacheKey );
+			$this->cache_cleared = true;
+		}
+	}
+
+	public function checkRelationNeedClearCache( $relation_name )
+	{
+		if( $this->with && in_array( $relation_name, $this->with ) )
+		{
+			$this->clearCache();
 		}
 	}
 
@@ -88,6 +96,12 @@ trait Cachable
 		return $query;
 	}
 
+	/**
+	 * 重载这个函数是为了在 update 的时候可以强制检查 timestamp
+	 *
+	 * @param Builder $query
+	 * @return bool
+	 */
 	protected function performUpdate(Builder $query)
 	{
 		// If the updating event returns false, we will cancel the update operation so
@@ -125,24 +139,5 @@ trait Cachable
 		}
 
 		return true;
-	}
-
-	protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
-	{
-		return new CachableBelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
-	}
-
-	protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey,
-	                                    $parentKey, $relatedKey, $relationName = null)
-	{
-		return new CachableBelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
-	}
-
-	protected function newMorphToMany(Builder $query, Model $parent, $name, $table, $foreignPivotKey,
-	                                  $relatedPivotKey, $parentKey, $relatedKey,
-	                                  $relationName = null, $inverse = false)
-	{
-		return new CachableMorphToMany($query, $parent, $name, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey,
-			$relationName, $inverse);
 	}
 }
