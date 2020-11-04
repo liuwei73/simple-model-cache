@@ -20,9 +20,11 @@ trait HasCachableMorphOne
 		});
 		static::morphOneSaved( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 		static::morphOneUpdated( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 	}
 }

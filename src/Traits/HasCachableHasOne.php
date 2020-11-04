@@ -20,9 +20,11 @@ trait HasCachableHasOne
 		});
 		static::hasOneSaved( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 		static::hasOneUpdated( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 	}
 }

@@ -2,13 +2,8 @@
 
 namespace liuwei73\SimpleModelCache\Traits;
 
-use Chelout\RelationshipEvents\Concerns\HasBelongsToManyEvents;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use liuwei73\SimpleModelCache\Relations\CachableBelongsTo;
-use liuwei73\SimpleModelCache\Relations\CachableBelongsToMany;
-use liuwei73\SimpleModelCache\Relations\CachableMorphToMany;
 use liuwei73\SimpleModelCache\Models\CachableBuilder;
 
 trait Cachable

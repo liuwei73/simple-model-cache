@@ -20,9 +20,11 @@ trait HasCachableMorphMany
 		});
 		static::morphManySaved( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 		static::morphManyUpdated( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 	}
 }

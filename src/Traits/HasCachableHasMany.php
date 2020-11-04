@@ -20,9 +20,11 @@ trait HasCachableHasMany
 		});
 		static::hasManySaved( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 		static::hasManyUpdated( function($parent, $related){
 			$parent->clearCache();
+			$related->clearCache();
 		});
 	}
 }
