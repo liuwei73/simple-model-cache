@@ -29,11 +29,21 @@ class CachableMorphToMany extends MorphToMany
 			return parent::get( $columns );
 		}
 
+		//如果有查询条件，或者有分页要求，也跳过，采用原始方式
+		$query = $this->getQuery()->getQuery();
+		if( count( $query->wheres ) > 1 || $query->offset || $query->limit )
+			return parent::get( $columns );
+
 		// get 方法在非 lazy load 的时候也会被调用，这种情况下 eagerModels 就是 NULL 了，需要处理这个情况
 		if( $this->eagerModels !== NULL ){
 			$parent_keys = $this->getKeys($this->eagerModels, $this->parentKey);
 		}
 		else{
+			//如果有查询条件，或者有分页要求，也跳过，采用原始方式
+			$query = $this->getQuery()->getQuery();
+			if( count( $query->wheres ) > 2 || $query->offset || $query->limit )
+				return parent::get( $columns );
+
 			$parent_keys = array();
 			$parent_key_name = $this->parentKey;
 			$parent_keys[] = $this->getParent()->$parent_key_name;

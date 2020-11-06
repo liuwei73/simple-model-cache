@@ -18,16 +18,24 @@ class CachableBelongsToMany extends BelongsToMany
 
 	public function get($columns = ['*'])
 	{
+		//如果只是获取需要的字段，也跳过，采用原始方式
 		if( !( count($columns ) == 1 && $columns[0] === "*" ) )
 		{
 			return parent::get( $columns );
 		}
+
+		/* 下面是对大部分情况下的优化 */
 
 		// get 方法在非 lazy load 的时候也会被调用，这种情况下 eagerModels 就是 NULL 了，需要处理这个情况
 		if( $this->eagerModels !== NULL ){
 			$parent_keys = $this->getKeys($this->eagerModels, $this->parentKey);
 		}
 		else{
+			//如果有查询条件，或者有分页要求，也跳过，采用原始方式
+			$query = $this->getQuery()->getQuery();
+			if( count( $query->wheres ) > 1 || $query->offset || $query->limit )
+				return parent::get( $columns );
+
 			$parent_keys = array();
 			$parent_key_name = $this->parentKey;
 			$parent_keys[] = $this->getParent()->$parent_key_name;
