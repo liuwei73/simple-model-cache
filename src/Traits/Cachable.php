@@ -22,6 +22,9 @@ trait Cachable
 		static::updated( function($model){
 			$model->clearCache();
 		});
+		static::deleted( function($model) {
+			$model->clearCache();
+		});
 	}
 
 	protected $cache_cleared = false;
