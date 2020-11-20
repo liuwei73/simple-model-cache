@@ -4,6 +4,12 @@ namespace liuwei73\SimpleModelCache\Traits;
 
 trait ColumnMapping
 {
+	protected $columns = [];
+
+	public static function bootColumnMapping()
+	{
+	}
+
 	/**
 	 * Dynamically retrieve attributes on the model.
 	 *

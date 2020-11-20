@@ -13,6 +13,7 @@ trait Cachable
 	public $cacheKeyPrefix = "EloquentModelCache";
 	protected $update_using_timestamp = true;
 
+	public $postloads = [];
 	/**
 	 * monitor updated event to clear cache.
 	 *
@@ -25,6 +26,14 @@ trait Cachable
 		static::deleted( function($model) {
 			$model->clearCache();
 		});
+		static::retrieved( function($model) {
+			//后加载所有的属性
+			foreach( $model->postloads as $postload ){
+				$name = "get".$postload;
+				$model->setAttribute( $postload, $model->$name() );
+			}
+			Log::debug( "Model Retrieved key ".$model->getCacheKey() );
+		});
 	}
 
 	protected $cache_cleared = false;
@@ -36,7 +45,7 @@ trait Cachable
 			$cache = $this->cache();
 			$cacheKey = $this->getCacheKey();
 			$cache->forget( $cacheKey );
-			Log::debug( "Clear Model Cache ".$cacheKey );
+			Log::debug( "Cache forget key ".$cacheKey );
 			$this->cache_cleared = true;
 		}
 	}
