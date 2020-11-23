@@ -2,6 +2,14 @@
 
 namespace liuwei73\SimpleModelCache\Models;
 
+use liuwei73\SimpleModelCache\Traits\HasCachableBelongsTo;
+use liuwei73\SimpleModelCache\Traits\HasCachableBelongsToMany;
+use liuwei73\SimpleModelCache\Traits\HasCachableHasMany;
+use liuwei73\SimpleModelCache\Traits\HasCachableHasOne;
+use liuwei73\SimpleModelCache\Traits\HasCachableMorphMany;
+use liuwei73\SimpleModelCache\Traits\HasCachableMorphOne;
+use liuwei73\SimpleModelCache\Traits\HasCachableMorphTo;
+use liuwei73\SimpleModelCache\Traits\HasCachableMorphToMany;
 use liuwei73\SimpleModelCache\Traits\IDGen;
 
 abstract class BaseModel extends CachableModel
@@ -14,6 +22,15 @@ abstract class BaseModel extends CachableModel
 	public $incrementing = false;
 
 	use IDGen;
+
+	use HasCachableBelongsTo;
+	use HasCachableBelongsToMany;
+	use HasCachableHasMany;
+	use HasCachableHasOne;
+	use HasCachableMorphMany;
+	use HasCachableMorphOne;
+	use HasCachableMorphTo;
+	use HasCachableMorphToMany;
 
 	protected function serializeDate(\DateTimeInterface $date)
 	{
