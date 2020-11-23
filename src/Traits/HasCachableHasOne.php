@@ -5,6 +5,7 @@ namespace liuwei73\SimpleModelCache\Traits;
 
 
 use Chelout\RelationshipEvents\Concerns\HasOneEvents;
+use Illuminate\Support\Collection;
 
 trait HasCachableHasOne
 {
@@ -20,11 +21,25 @@ trait HasCachableHasOne
 		});
 		static::hasOneSaved( function($parent, $related){
 			$parent->clearCache();
-			$related->clearCache();
+			if( $related instanceof Collection )
+			{
+				foreach( $related as $related_obj )
+					$related_obj->clearCache();
+			}
+			else{
+				$related->clearCache();
+			}
 		});
 		static::hasOneUpdated( function($parent, $related){
 			$parent->clearCache();
-			$related->clearCache();
+			if( $related instanceof Collection )
+			{
+				foreach( $related as $related_obj )
+					$related_obj->clearCache();
+			}
+			else{
+				$related->clearCache();
+			}
 		});
 	}
 }

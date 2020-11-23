@@ -5,6 +5,8 @@ namespace liuwei73\SimpleModelCache\Traits;
 
 
 use Chelout\RelationshipEvents\Concerns\HasMorphManyEvents;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 trait HasCachableMorphMany
 {
@@ -20,11 +22,25 @@ trait HasCachableMorphMany
 		});
 		static::morphManySaved( function($parent, $related){
 			$parent->clearCache();
-			$related->clearCache();
+			if( $related instanceof Collection )
+			{
+				foreach( $related as $related_obj )
+					$related_obj->clearCache();
+			}
+			else{
+				$related->clearCache();
+			}
 		});
 		static::morphManyUpdated( function($parent, $related){
 			$parent->clearCache();
-			$related->clearCache();
+			if( $related instanceof Collection )
+			{
+				foreach( $related as $related_obj )
+					$related_obj->clearCache();
+			}
+			else{
+				$related->clearCache();
+			}
 		});
 	}
 }
