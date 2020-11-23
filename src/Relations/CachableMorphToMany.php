@@ -39,11 +39,6 @@ class CachableMorphToMany extends MorphToMany
 			$parent_keys = $this->getKeys($this->eagerModels, $this->parentKey);
 		}
 		else{
-			//如果有查询条件，或者有分页要求，也跳过，采用原始方式
-			$query = $this->getQuery()->getQuery();
-			if( count( $query->wheres ) > 2 || $query->offset || $query->limit )
-				return parent::get( $columns );
-
 			$parent_keys = array();
 			$parent_key_name = $this->parentKey;
 			$parent_keys[] = $this->getParent()->$parent_key_name;
