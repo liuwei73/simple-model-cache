@@ -122,15 +122,16 @@ class CachableBuilder extends Builder
 		}
 
 		//设置到 cache 注意要检查 cacheTime
-		if( $relatedModel->cacheTime > 0 ){
-			Log::debug( "Cache putMany TTL ".$relatedModel->cacheTime." keys ".implode( ",", array_keys( $cacheMissingMaps ) ) );
-			$cache->putMany( $cacheMissingMaps, $relatedModel->cacheTime );
+		if( count( $cacheMissingMaps ) > 0 ) {
+			if( $relatedModel->cacheTime > 0 ){
+				Log::debug( "Cache putMany TTL ".$relatedModel->cacheTime." keys ".implode( ",", array_keys( $cacheMissingMaps ) ) );
+				$cache->putMany( $cacheMissingMaps, $relatedModel->cacheTime );
+			}
+			else{
+				Log::debug( "Cache putManyForever keys ".implode( ",", array_keys( $cacheMissingMaps ) ) );
+				$cache->putManyForever( $cacheMissingMaps );
+			}
 		}
-		else{
-			Log::debug( "Cache putManyForever keys ".implode( ",", array_keys( $cacheMissingMaps ) ) );
-			$cache->putManyForever( $cacheMissingMaps );
-		}
-
 		//组织返回值
 		$models = array();
 		foreach( $ids as $id )
