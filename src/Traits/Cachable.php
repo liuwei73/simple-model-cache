@@ -14,6 +14,7 @@ trait Cachable
 	protected $update_using_timestamp = true;
 
 	public $postloads = [];
+	public $postload_attributes = [];
 	/**
 	 * monitor updated event to clear cache.
 	 *
@@ -30,10 +31,17 @@ trait Cachable
 			//后加载所有的属性
 			foreach( $model->postloads as $postload ){
 				$name = "get".$postload;
-				$model->setAttribute( $postload, $model->$name() );
+				$model->postload_attributes[ $postload ] = $model->$name();
 			}
-			Log::debug( "Model Retrieved key ".$model->getCacheKey() );
 		});
+	}
+
+	public function __get($key)
+	{
+		if( in_array( $key, $this->postloads ) )
+			return $this->postload_attributes[ $key ];
+		else
+			return $this->getAttribute( $key );
 	}
 
 	protected $cache_cleared = false;
