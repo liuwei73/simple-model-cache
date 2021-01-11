@@ -39,6 +39,9 @@ abstract class BaseModel extends CachableModel
 
 	protected function _getCodeNames( $codeStr, $className, $textColumn )
 	{
+		if( $codeStr === null )
+			return "";
+
 		$codes = explode( ",", $codeStr );
 		$names = array();
 		foreach( $codes as $code )
