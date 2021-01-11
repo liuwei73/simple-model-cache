@@ -26,7 +26,7 @@ class CachableBuilder extends Builder
 		$modelClassName = get_class( $relatedModel );
 
 		//先查询获取所有的 IDs 数组
-		$idObjects = $this->query->get($keyName)->all();
+		$idObjects = $this->query->get( $relatedModel->getTable().".".$keyName)->all();
 		$ids = array();
 		foreach( $idObjects as $idObject )
 			$ids[] = $idObject->$keyName;
@@ -171,5 +171,17 @@ class CachableBuilder extends Builder
 		}
 
 		return $cache;
+	}
+
+	private $left_joins = array();
+	public function leftJoin($table, $first, $operator = null, $second = null)
+	{
+		if( !array_key_exists( $table, $this->left_joins ) )
+		{
+			$this->left_joins[ $table ] = $table;
+			return parent::leftJoin( $table, $first, $operator, $second );
+		}
+		else
+			return $this;
 	}
 }
