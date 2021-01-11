@@ -36,4 +36,16 @@ abstract class BaseModel extends CachableModel
 	{
 		return $date->format('Y-m-d H:i:s');
 	}
+
+	protected function _getCodeNames( $codeStr, $className, $textColumn )
+	{
+		$codes = explode( ",", $codeStr );
+		$names = array();
+		foreach( $codes as $code )
+		{
+			$model = $className::find( $code );
+			$names[] = $model->$textColumn;
+		}
+		return implode( ",", $names );
+	}
 }
