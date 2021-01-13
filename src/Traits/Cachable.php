@@ -3,6 +3,7 @@
 namespace liuwei73\SimpleModelCache\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use liuwei73\SimpleModelCache\Models\CachableBuilder;
 
@@ -22,12 +23,24 @@ trait Cachable
 	public static function bootCachable()
 	{
 		static::updated( function($model){
+			//刷新后加载所有的属性
+			foreach( $model->postloads as $postload ){
+				$name = "get".$postload;
+				$model->postload_attributes[ $postload ] = $model->$name();
+			}
 			$model->clearCache();
 		});
 		static::deleted( function($model) {
 			$model->clearCache();
 		});
 		static::retrieved( function($model) {
+			//后加载所有的属性
+			foreach( $model->postloads as $postload ){
+				$name = "get".$postload;
+				$model->postload_attributes[ $postload ] = $model->$name();
+			}
+		});
+		static::created( function($model) {
 			//后加载所有的属性
 			foreach( $model->postloads as $postload ){
 				$name = "get".$postload;
@@ -144,7 +157,7 @@ trait Cachable
 			if( $this->update_using_timestamp && $this->usesTimestamps() && $ret == 0 )
 			{
 				$this->fireModelEvent('updated', false);
-				throw new QueryException( "model is dirty, you need refresh first." );
+				throw new \Exception( "model is dirty, you need refresh first." );
 			}
 
 			$this->syncChanges();

@@ -39,7 +39,7 @@ abstract class BaseModel extends CachableModel
 
 	protected function _getCodeNames( $codeStr, $className, $textColumn )
 	{
-		if( $codeStr === null )
+		if( $codeStr === null || strlen( trim( $codeStr ) ) == 0 )
 			return "";
 
 		$codes = explode( ",", $codeStr );
