@@ -47,7 +47,8 @@ abstract class BaseModel extends CachableModel
 		foreach( $codes as $code )
 		{
 			$model = $className::find( $code );
-			$names[] = $model->$textColumn;
+			if( $model )
+				$names[] = $model->$textColumn;
 		}
 		return implode( ",", $names );
 	}
