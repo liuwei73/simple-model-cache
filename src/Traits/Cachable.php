@@ -65,8 +65,8 @@ trait Cachable
 		{
 			$cache = $this->cache();
 			$cacheKey = $this->getCacheKey();
-			$cache->forget( $cacheKey );
-			Log::debug( "Cache forget key ".$cacheKey );
+			$ret = $cache->forget( $cacheKey );
+			Log::debug( "Cache forget key ".$cacheKey." return ".$ret );
 			$this->cache_cleared = true;
 		}
 	}
