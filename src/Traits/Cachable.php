@@ -22,6 +22,9 @@ trait Cachable
 	 */
 	public static function bootCachable()
 	{
+		static::saving( function($model){
+			$model->cache_cleared = false;
+		});
 		static::updated( function($model){
 			//刷新后加载所有的属性
 			foreach( $model->postloads as $postload ){
@@ -57,7 +60,7 @@ trait Cachable
 			return $this->getAttribute( $key );
 	}
 
-	protected $cache_cleared = false;
+	public $cache_cleared = false;
 
 	public function clearCache()
 	{
@@ -65,8 +68,10 @@ trait Cachable
 		{
 			$cache = $this->cache();
 			$cacheKey = $this->getCacheKey();
+
 			$ret = $cache->forget( $cacheKey );
-			Log::debug( "Cache forget key ".$cacheKey." return ".$ret );
+			Log::debug( "Cache forget key ".$cacheKey." return ".intval($ret) );
+
 			$this->cache_cleared = true;
 		}
 	}
@@ -117,7 +122,7 @@ trait Cachable
 			$updatedAtColumn = $this->getUpdatedAtColumn();
 			$old_timestamp = $this->getOriginal( $updatedAtColumn );
 			if( $old_timestamp ) {
-				$query->where( $updatedAtColumn, "=", $old_timestamp );
+				$query->where( $updatedAtColumn, "=", $old_timestamp->format( 'Y-m-d H:i:s' ) );
 			}
 		}
 		return $query;

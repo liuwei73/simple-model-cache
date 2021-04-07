@@ -124,12 +124,12 @@ class CachableBuilder extends Builder
 		//设置到 cache 注意要检查 cacheTime
 		if( count( $cacheMissingMaps ) > 0 ) {
 			if( $relatedModel->cacheTime > 0 ){
-				Log::debug( "Cache putMany TTL ".$relatedModel->cacheTime." keys ".implode( ",", array_keys( $cacheMissingMaps ) ) );
-				$cache->putMany( $cacheMissingMaps, $relatedModel->cacheTime );
+				$ret = $cache->putMany( $cacheMissingMaps, $relatedModel->cacheTime );
+				Log::debug( "Cache putMany TTL ".$relatedModel->cacheTime." keys ".implode( ",", array_keys( $cacheMissingMaps ) )." return ".$ret );
 			}
 			else{
-				Log::debug( "Cache putManyForever keys ".implode( ",", array_keys( $cacheMissingMaps ) ) );
-				$cache->putManyForever( $cacheMissingMaps );
+				$ret = $cache->putManyForever( $cacheMissingMaps );
+				Log::debug( "Cache putManyForever keys ".implode( ",", array_keys( $cacheMissingMaps ) )." return ".$ret );
 			}
 		}
 		//组织返回值
@@ -183,5 +183,36 @@ class CachableBuilder extends Builder
 		}
 		else
 			return $this;
+	}
+
+	/**
+	 * 重载这个函数，是因为在这个函数会再次更新 updated_at 这个字段，而且还不回写 model，这样会导致 model is dirty 的异常
+	 *
+	 * @param array $values
+	 * @return array
+	 */
+	protected function addUpdatedAtColumn(array $values)
+	{
+		if (! $this->model->usesTimestamps() ||
+			is_null($this->model->getUpdatedAtColumn())) {
+			return $values;
+		}
+
+		$column = $this->model->getUpdatedAtColumn();
+
+		$values = array_merge(
+			[$column => $this->model->$column],
+			$values
+		);
+
+		$segments = preg_split('/\s+as\s+/i', $this->query->from);
+
+		$qualifiedColumn = end($segments).'.'.$column;
+
+		$values[$qualifiedColumn] = $values[$column];
+
+		unset($values[$column]);
+
+		return $values;
 	}
 }
