@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Log;
 
 class CachableBuilder extends Builder
 {
+	static $cache_enable = false;
+
+	public static function enableCache()
+	{
+		self::$cache_enable = true;
+	}
+
 	public function get($columns = ["*"])
 	{
 		if (! $this->isCachable() ) {
@@ -89,6 +96,7 @@ class CachableBuilder extends Builder
 		//查询缓存
 		$cache = $this->cache();
 		$cacheModels = $cache->many( array_values( $cacheKeys ) );
+		Log::debug( "Cache many keys ".implode( ",", array_values( $cacheKeys ) ) );
 
 		//找出缓存没有命中的 ID
 		$cacheMissingIDs = array();
@@ -155,7 +163,7 @@ class CachableBuilder extends Builder
 	{
 		$relatedModel = $this->model;
 
-		if( $relatedModel->isCachable )
+		if( self::$cache_enable && $relatedModel->isCachable )
 			return true;
 
 		return false;
